@@ -1,0 +1,16 @@
+def custom_split(text, delimiter)
+    segments = []
+    
+    last_i, current_i = 0
+    for i in 0..text.length
+        if(text[i] == delimiter)
+            current_i = i
+            segments.push(text[last_i, current_i])
+            last_i = current_i+1
+        end
+    end
+    
+    segments
+end
+
+p custom_split("Hi, my name is Boris", " ") 
