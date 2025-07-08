@@ -3,48 +3,48 @@ import { Usuario } from "../models/Usuario.js";
 import bcrypt from "bcryptjs";
 import { generarJWT } from "../helpers/jwt.js";
 
-const crearUsuario = async (req, res) => {
+const crearUsuario = async(req, res = response ) => {
 
     const { email, password } = req.body;
 
     try {
-
         let usuario = await Usuario.findOne({ email });
 
-
-        if (usuario) {
+        if ( usuario ) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Un usuario existe con ese correo'
-            })
+                msg: 'El usuario ya existe'
+            });
         }
 
-        usuario = new Usuario(req.body);
-
-        //Encriptar contraseña
+        usuario = new Usuario( req.body );
+    
+        // Encriptar contraseña
         const salt = bcrypt.genSaltSync();
-        usuario.password = bcrypt.hashSync(password, salt);
+        usuario.password = bcrypt.hashSync( password, salt );
 
 
         await usuario.save();
 
-
         // Generar JWT
-        const token = await generarJWT(usuario.id, usuario.name);
-
+        const token = await generarJWT( usuario.id, usuario.name );
+    
         res.status(201).json({
             ok: true,
             uid: usuario.id,
             name: usuario.name,
             token
         })
+        
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             ok: false,
-            msg: 'Contacte al administrador'
-        })
+            msg: 'Por favor hable con el administrador'
+        });
     }
 }
+
 
 const loginUsuario = async (req, res) => {
 

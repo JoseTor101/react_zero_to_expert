@@ -9,6 +9,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import "react-datepicker/dist/react-datepicker.css";
 import { useCalendarStore, useUiStore } from "../../hooks";
 import { useSelector } from "react-redux";
+import { getEnv } from "../../helpers";
 
 registerLocale('es', es)
 
@@ -23,8 +24,9 @@ const customStyles = {
     },
 };
 
-// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement('#root');
+if ( getEnv().VITE_MODE !== 'test'  ) {
+    Modal.setAppElement('#root');
+}
 
 export const CalendarModal = () => {
     const {isDateModalOpen, closeDateModal} = useUiStore();

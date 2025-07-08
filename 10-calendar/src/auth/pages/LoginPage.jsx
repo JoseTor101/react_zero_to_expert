@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import Swal from 'sweetalert2';
 import { useAuthStore } from '../../hooks';
 import { useForm } from '../../hooks/useForm';
 import './LoginPage.css'
@@ -16,20 +18,38 @@ const registerFormFields = {
 
 export const LoginPage = () => {
 
-    const {startLogin} = useAuthStore();
+    const {startLogin, startRegister, errorMessage} = useAuthStore();
 
 
-    const {loginEmail, loginPassword, onInputChange: onLoginInputChange } = useForm(loginFormFields);
-    const {registerName, registerEmail, registerPassword, registerPassword2, onInputChange: onRegisterInputChange } = useForm(loginFormFields);
+    const {loginEmail, loginPassword, onInputChange: onLoginInputChange, onResetForm: onResetLoginForm } = useForm(loginFormFields);
+    const {registerName, registerEmail, registerPassword, registerPassword2, onInputChange: onRegisterInputChange, onResetForm: onResetRegisterForm } = useForm(registerFormFields);
 
 
     const loginSubmit = (e) => {
         e.preventDefault();
         startLogin({email: loginEmail, password: loginPassword})
+        onResetLoginForm();
     };
     const registerSubmit = (e) => {
         e.preventDefault();
+        if(registerPassword !== registerPassword2){
+            Swal.fire('Error en el registro', 'Contraseñas no coindiden', 'error')
+            return;
+        }
+
+        startRegister({name: registerName, email: registerEmail, password: registerPassword})
+        
+        onResetRegisterForm();
     };
+
+    useEffect(() => {
+
+        if(errorMessage !== undefined){
+            Swal.fire('Error en la autenticación', errorMessage,'error')
+        }
+
+    }, [errorMessage])
+    
 
 
     return(
